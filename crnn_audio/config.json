@@ -1,0 +1,57 @@
+{
+    "name": "Cough Classifier",
+    "data": {
+        "type": "CSVDataManager",
+        "path": "/home/xavi_oliva/Documents/EPFL/Projects/cs-433-project-2-cough_classifier/crnn_audio/data/",
+        "format": "audio",
+        "loader": {
+            "shuffle": true,
+            "batch_size": 64,
+            "num_workers": 4,
+            "drop_last": true
+        }
+    },
+    "transforms": {
+        "type": "AudioTransforms",
+        "args": {
+            "channels": "avg",
+            "noise": [
+                0.3,
+                0.001
+            ],
+            "crop": [
+                0.4,
+                0.25
+            ]
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args": {
+            "lr": 0.002,
+            "weight_decay": 0.01,
+            "amsgrad": true
+        }
+    },
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 10,
+            "gamma": 0.5
+        }
+    },
+    "model": {
+        "type": "AudioCRNN"
+    },
+    "train": {
+        "loss": "nll_loss",
+        "epochs": 5,
+        "save_dir": "saved_cv/",
+        "save_p": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 5,
+        "tbX": true
+    },
+    "metrics": "classification_metrics"
+}
